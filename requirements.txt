@@ -1,0 +1,8 @@
+﻿# SmartHomeEnergy - Python host dependencies
+# Used by the IoT simulator and Streamlit dashboard
+
+streamlit>=1.30.0
+pandas>=2.0.0
+pymongo>=4.6.0
+kafka-python>=2.0.2
+numpy>=1.24.3

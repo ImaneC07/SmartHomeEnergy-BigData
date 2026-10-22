@@ -1,0 +1,30 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+
+# Données brutes volumineuses
+data/raw/*
+!data/raw/README.md
+
+# Données et modèles générés
+data/kafka_raw.json
+data/processed/
+data/interim/
+
+# Fichiers de test temporaires et sauvegardes
+src/*_backup.py
+
+# Logs et fichiers temporaires
+*.log
+*.tmp
+
+# Éditeurs
+.vscode/
+.idea/
+
+# Modèle Spark exporté localement
+model_export/

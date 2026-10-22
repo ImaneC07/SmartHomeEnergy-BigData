@@ -1,0 +1,108 @@
+services:
+
+  kafka:
+    image: apache/kafka:4.0.1
+
+    container_name: smarthome-kafka
+
+    ports:
+      - "9092:9092"
+
+    environment:
+      # --- KRaft ---
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      # --- Controller ---
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+
+      # --- Listeners ---
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # --- Single broker ---
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+      # --- Development ---
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    
+  namenode:
+    image: apache/hadoop:3.3.6
+    container_name: smarthome-namenode
+    user: root
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+
+    environment:
+      - HDFS_NAMENODE_USER=root
+    
+    volumes:
+      - ./hadoop/config:/opt/hadoop/etc/hadoop
+      - smarthome-namenode-data:/data/dfs/name
+
+    command: ["hdfs", "namenode"]
+  
+  datanode:
+    image: apache/hadoop:3.3.6
+    container_name: smarthome-datanode
+
+    user: root
+
+    ports:
+      - "9864:9864"
+      - "9866:9866"
+
+    environment:
+      - HDFS_DATANODE_USER=root
+
+    volumes:
+      - ./hadoop/config:/opt/hadoop/etc/hadoop
+      - smarthome-datanode-data:/data/dfs/data
+
+    depends_on:
+      - namenode
+
+    command: ["hdfs", "datanode"]
+    
+  spark:
+    image: smarthome-spark:3.5.1
+    build: ./spark
+    container_name: smarthome-spark
+
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+
+    volumes:
+      - ./src:/tmp/spark-apps/src
+
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
+  
+  mongodb:
+    image: mongo:7
+    container_name: smarthome-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+
+volumes:
+  kafka-data:
+  smarthome-namenode-data:
+  smarthome-datanode-data:
+  mongodb-data:
