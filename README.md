@@ -287,26 +287,7 @@ The dashboard displays data stored in MongoDB. It may remain empty until the pro
 - The IoT producer generates synthetic measurements; it does not collect data from physical sensors.
 - The streaming workflow depends on historical data and a model already available in HDFS.
 - The Docker Compose configuration is intended for local development and demonstration, not production deployment.
-- Model metrics and latency should be reproduced and validated before being used as general performance claims.
 - The repository does not include the large raw dataset.
 
-## Future Improvements
-
-- Provide a fully automated historical initialization workflow.
-- Add integration tests and data validation for streaming features.
-- Add monitoring for prediction latency, throughput, and failures.
-- Improve configuration management and service health checks.
-- Add reproducible experiments and model comparison visualizations.
-- Extend the dashboard with historical trends and prediction error analysis.
-
-## Academic Context
-
-Academic Big Data project, 2025–2026.
-
-Authors: Dikra Habsaoui and Imane Chaabani.
-
-Supervisor: Pr. Chaymae Rami.
-
----
 
 *Built as a hands-on exploration of distributed data processing, machine learning, and real-time analytics.*
